@@ -3,40 +3,42 @@ import {
   Column,
   Model,
   Sequelize,
-  PrimaryKey,
   AllowNull,
   Default,
   CreatedAt,
   UpdatedAt,
   DeletedAt,
-  AutoIncrement,
-  DataType,
-  BelongsToMany,
+  ForeignKey,
+  BelongsTo,
 } from 'sequelize-typescript';
-import { RoleType } from 'src/shared/enums/roles.enum';
-import { UsersBooks } from 'src/users-books/entities/users-books.entity';
+import { Books } from 'src/books/entities/books.entity';
 import { Users } from 'src/users/entities/users.entity';
 
 @Table({
-  tableName: 'Books',
+  tableName: 'Users_x_Books',
   paranoid: true,
 })
-export class Books extends Model<Books> {
-  @PrimaryKey
-  @AutoIncrement
+export class UsersBooks extends Model<UsersBooks> {
+  @ForeignKey(() => Users)
   @Column
-  id: number;
+  userId: number;
 
-  @AllowNull(false)
+  @BelongsTo(() => Users, { onDelete: 'CASCADE' })
+  user: Users;
+
+  @ForeignKey(() => Books)
   @Column
-  name: string;
+  bookId: number;
+
+  @BelongsTo(() => Books, { onDelete: 'CASCADE' })
+  book: Books;
 
   @Column
-  numPages: number;
+  startPage: number;
 
-  @BelongsToMany(() => Users, () => UsersBooks)
-  users: Users[];
-  
+  @Column
+  endPage: number;
+
   @CreatedAt
   @AllowNull(false)
   @Default(Sequelize.literal('CURRENT_TIMESTAMP'))

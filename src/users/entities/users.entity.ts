@@ -11,8 +11,11 @@ import {
   DeletedAt,
   AutoIncrement,
   DataType,
+  BelongsToMany,
 } from 'sequelize-typescript';
+import { Books } from 'src/books/entities/books.entity';
 import { RoleType } from 'src/shared/enums/roles.enum';
+import { UsersBooks } from 'src/users-books/entities/users-books.entity';
 
 @Table({
   tableName: 'Users',
@@ -36,6 +39,9 @@ export class Users extends Model<Users> {
 
   @Column
   role: RoleType;
+
+  @BelongsToMany(() => Books, () => UsersBooks)
+  books: Books[];
 
   @CreatedAt
   @AllowNull(false)

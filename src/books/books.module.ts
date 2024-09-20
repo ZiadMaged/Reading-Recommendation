@@ -16,6 +16,6 @@ const PROVIDERS = [
   ],
   providers: [...PROVIDERS],
   controllers: [BooksController],
-  exports: [BooksService],
+  exports: [...PROVIDERS],
 })
 export class BooksModule { }
