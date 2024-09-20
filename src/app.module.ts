@@ -7,6 +7,7 @@ import { ValidatorsModule } from './shared/validators/validators.module';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { HttpExceptionFilter } from './shared/filters/http-exception.filter';
 import { AuthGuard } from './shared/validators/auth.guard';
+import { BooksModule } from './books/books.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AuthGuard } from './shared/validators/auth.guard';
     SequelizeModule.forRootAsync(getConfig()),
     ValidatorsModule,
     UsersModule,
+    BooksModule,
   ],
   providers: [
     {
