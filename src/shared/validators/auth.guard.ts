@@ -7,7 +7,6 @@ import {
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IS_PUBLIC_KEY } from './auth.decorator';
-import { JWT_SECRET } from '../../auth/utils/auth.constant';
 import { JwtService } from '@nestjs/jwt';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';

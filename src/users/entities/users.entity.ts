@@ -10,7 +10,9 @@ import {
   UpdatedAt,
   DeletedAt,
   AutoIncrement,
+  DataType,
 } from 'sequelize-typescript';
+import { RoleType } from 'src/shared/enums/roles.enum';
 
 @Table({
   tableName: 'Users',
@@ -31,6 +33,9 @@ export class Users extends Model<Users> {
 
   @Column
   password: string;
+
+  @Column
+  role: RoleType;
 
   @CreatedAt
   @AllowNull(false)

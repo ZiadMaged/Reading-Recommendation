@@ -15,6 +15,8 @@ export class RegisterRequestDto {
   @IsNotEmpty()
   @MinLength(8)
   password?: string;
+
+  role?: RoleType;
 }
 
 export class RegisterResponseDto {

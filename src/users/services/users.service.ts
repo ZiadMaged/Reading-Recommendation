@@ -4,14 +4,14 @@ import {
   AppErrorStatus,
   getErrorMsg,
 } from 'src/shared/exceptions/AppError';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { compare, hash } from 'bcrypt';
 
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { RoleType } from 'src/shared/enums/role-type.enum';
-import { LoginRequestDto, LoginResponseDto, TokenSchema, UserSchema } from '../utils/users.dto';
+import { LoginRequestDto, LoginResponseDto, RegisterRequestDto, RegisterResponseDto, TokenSchema, UserSchema } from '../utils/users.dto';
+import { UsersRepository } from '../repositories/users.repository';
 
 const EXPIRE_TIME = 60 * 60 * 24;
 
@@ -20,10 +20,17 @@ export class UsersService {
   constructor(
     private jwtService: JwtService,
     private readonly configService: ConfigService<NodeJS.ProcessEnv>,
+    protected readonly userRepository: UsersRepository
   ) { }
 
+  async register(payload: RegisterRequestDto): Promise<RegisterResponseDto> {
+    payload.password = await hash(payload.password, 10);
+
+    return await this.userRepository.create(payload);
+  }
+
   async login(payload: LoginRequestDto): Promise<LoginResponseDto> {
-    const user: UserSchema = await this.validateAdmin(payload);
+    const user: UserSchema = await this.validateUser(payload);
     const backendTokens: TokenSchema = await this.getNewTokens(user);
 
     return {
@@ -32,8 +39,8 @@ export class UsersService {
     };
   }
 
-  private async validateAdmin(payload: LoginRequestDto): Promise<UserSchema> {
-    const user: UserSchema = await this.adminsService.getAdmin(null, {
+  private async validateUser(payload: LoginRequestDto): Promise<UserSchema> {
+    const user: UserSchema = await this.userRepository.get(null, {
       where: { email: payload.email },
     });
 
@@ -52,14 +59,12 @@ export class UsersService {
         AppErrorStatus.UNAUTHORIZED,
       );
 
-    const adminDto: UserSchema = {
+    return {
       id: user.id,
       name: user.name,
       email: user.email,
       role: user.role,
     };
-
-    return adminDto;
   }
 
   private async getNewTokens(user: UserSchema): Promise<TokenSchema> {
@@ -89,10 +94,10 @@ export class UsersService {
   }
 
   private async isAuthorized(
-    admin: UserSchema,
+    user: UserSchema,
     payload: LoginRequestDto,
   ): Promise<boolean> {
-    return admin && (await compare(payload.password, admin.password));
+    return user && (await compare(payload.password, user.password));
   }
 
   async refreshToken(user: UserSchema): Promise<LoginResponseDto> {
