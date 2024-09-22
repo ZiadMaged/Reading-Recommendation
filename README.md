@@ -93,8 +93,7 @@ $ npm run start
         "book_name": "test3",
         "num_of_pages": "100",
         "num_of_read_pages": "90"
-      },
-      ...
+      }
     ]
     ```
     
