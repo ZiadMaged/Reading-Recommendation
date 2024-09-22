@@ -14,14 +14,21 @@ import { BooksInterceptor } from '../utils/interceptor/books.interceptor';
 import { RoleType } from 'src/shared/enums/roles.enum';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from 'src/shared/validators/auth.guard';
-import { CreateBookDto, ParamBookDto, ResponseBookDto, UpdateBookDto } from '../utils/books.dto';
+import {
+  CreateBookDto,
+  ParamBookDto,
+  ResponseBookDto,
+  UpdateBookDto,
+} from '../utils/books.dto';
 import { UserSchema } from 'src/users/utils/users.dto';
-import { AppError, AppErrorCodes, AppErrorStatus } from 'src/shared/exceptions/AppError';
+import {
+  AppError,
+  AppErrorCodes,
+  AppErrorStatus,
+} from 'src/shared/exceptions/AppError';
 
 @Controller('books')
-@UseInterceptors(
-  new BooksInterceptor<ResponseBookDto>(ResponseBookDto),
-)
+@UseInterceptors(new BooksInterceptor<ResponseBookDto>(ResponseBookDto))
 export class BooksController {
   constructor(private booksService: BooksService) {}
 
@@ -72,13 +79,13 @@ export class BooksController {
 
     return await this.booksService.getAll();
   }
-  
+
   private validateRole(role: RoleType): void {
-    if(role !== RoleType.Admin)
+    if (role !== RoleType.Admin)
       throw new AppError(
         'Only Admins can access this endpoint',
         AppErrorCodes.INSUFFICIENT_PERMISSIONS,
-        AppErrorStatus.INSUFFICIENT_PERMISSIONS
+        AppErrorStatus.INSUFFICIENT_PERMISSIONS,
       );
   }
 }

@@ -1,6 +1,5 @@
-import { Expose } from "class-transformer";
-import { RoleType } from "src/shared/enums/roles.enum";
-
+import { Expose } from 'class-transformer';
+import { RoleType } from 'src/shared/enums/roles.enum';
 
 export class UserSchema {
   @Expose()
@@ -8,10 +7,10 @@ export class UserSchema {
 
   @Expose()
   name?: string;
-  
+
   @Expose()
   email?: string;
-  
+
   @Expose()
   role?: RoleType;
 

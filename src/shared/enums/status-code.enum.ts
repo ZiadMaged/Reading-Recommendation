@@ -1,4 +1,4 @@
 export enum StatusCodeType {
-    success = 'success', 
-    failed = 'failed'
+  success = 'success',
+  failed = 'failed',
 }

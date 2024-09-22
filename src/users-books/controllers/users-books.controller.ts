@@ -13,18 +13,24 @@ import { BooksInterceptor } from '../utils/interceptor/users-books.interceptor';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from 'src/shared/validators/auth.guard';
 import { UserSchema } from 'src/users/utils/users.dto';
-import { ResponseBookProgressDto, ResponseRecommendationBookDto, UpdateBookProgressDto } from '../utils/users-books.dto';
+import {
+  ResponseBookProgressDto,
+  ResponseRecommendationBookDto,
+  UpdateBookProgressDto,
+} from '../utils/users-books.dto';
 import { ParamBookDto } from 'src/books/utils/books.dto';
 
 @Controller('books')
 export class UsersBooksController {
   constructor(private usersBooksService: UsersBooksService) {}
-  
+
   @Get('recommendations')
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @UseInterceptors(
-    new BooksInterceptor<ResponseRecommendationBookDto>(ResponseRecommendationBookDto),
+    new BooksInterceptor<ResponseRecommendationBookDto>(
+      ResponseRecommendationBookDto,
+    ),
   )
   async getRecommendBooks(): Promise<ResponseRecommendationBookDto[]> {
     return await this.usersBooksService.getRecommendationBooks();
@@ -50,5 +56,4 @@ export class UsersBooksController {
 
     return await this.usersBooksService.addBookProgress(dto);
   }
-
 }

@@ -7,9 +7,8 @@ export class RegisterRequestDto {
   @IsNotEmpty()
   name?: string;
 
-  @IsNotEmpty()
-  @IsEmail()
   @Validate(DoesntExists, ['Users', 'email'])
+  @IsEmail()
   email?: string;
 
   @IsNotEmpty()
@@ -25,10 +24,10 @@ export class RegisterResponseDto {
 
   @Expose()
   name?: string;
-  
+
   @Expose()
   email?: string;
-  
+
   @Expose()
   role?: RoleType;
 }

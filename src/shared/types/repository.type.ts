@@ -1,17 +1,17 @@
 import {
-    Attributes,
-    CreateOptions,
-    CreationAttributes,
-    FindOptions,
-    Model,
-    UpdateOptions,
-    DestroyOptions,
-    WhereOptions,
-    BulkCreateOptions,
-    CountOptions,
-    FindAndCountOptions,
-  } from 'sequelize';
-  
+  Attributes,
+  CreateOptions,
+  CreationAttributes,
+  FindOptions,
+  Model,
+  UpdateOptions,
+  DestroyOptions,
+  WhereOptions,
+  BulkCreateOptions,
+  CountOptions,
+  FindAndCountOptions,
+} from 'sequelize';
+
 export type FindOptionsType<M extends Model<M>> = FindOptions<Attributes<M>>;
 
 export type CreateOptionsType<M extends Model<M>> = CreateOptions<

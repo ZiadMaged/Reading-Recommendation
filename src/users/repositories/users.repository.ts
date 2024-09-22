@@ -1,15 +1,32 @@
 import { Users } from '../entities/users.entity';
 import { ModelCtor } from 'sequelize-typescript';
-import { CreateOptionsType, CreateType, DestroyOptionsType, FindOptionsType, UpdateOptionWithReturnType } from 'src/shared/types/repository.type';
+import {
+  CreateOptionsType,
+  CreateType,
+  DestroyOptionsType,
+  FindOptionsType,
+  UpdateOptionWithReturnType,
+} from 'src/shared/types/repository.type';
 import { UserSchema } from '../utils/users.dto';
-import { AppError, AppErrorCodes, AppErrorStatus, getErrorMsg } from 'src/shared/exceptions/AppError';
+import {
+  AppError,
+  AppErrorCodes,
+  AppErrorStatus,
+  getErrorMsg,
+} from 'src/shared/exceptions/AppError';
+import { Logger } from '@nestjs/common';
 
 export class UsersRepository {
+  private readonly logger = new Logger(UsersRepository.name);
+
   constructor(protected repository: ModelCtor<Users>) {
     this.repository = Users;
   }
 
-  async get(id?: number, options?: FindOptionsType<Users>): Promise<UserSchema> {
+  async get(
+    id?: number,
+    options?: FindOptionsType<Users>,
+  ): Promise<UserSchema> {
     try {
       let modelResult: Users;
 
@@ -19,11 +36,7 @@ export class UsersRepository {
 
       return this.transformResult(modelResult);
     } catch (err) {
-      throw new AppError(
-        `Error while getting a record, ${getErrorMsg(err)}`,
-        AppErrorCodes.VALIDATION_ERROR,
-        AppErrorStatus.UNPROCESSABLE_ENTITY,
-      );
+      this.throwError(`Error while getting a record, ${getErrorMsg(err)}`);
     }
   }
 
@@ -36,11 +49,7 @@ export class UsersRepository {
 
       return this.transformResult(modelResult);
     } catch (err) {
-      throw new AppError(
-        `Error while creating, ${getErrorMsg(err)}`,
-        AppErrorCodes.VALIDATION_ERROR,
-        AppErrorStatus.UNPROCESSABLE_ENTITY,
-      );
+      this.throwError(`Error while creating, ${getErrorMsg(err)}`);
     }
   }
 
@@ -61,15 +70,9 @@ export class UsersRepository {
         }
 
         return resp as UserSchema;
-      } else 
-        return this.transformResult(result[1][0]);
-      
+      } else return this.transformResult(result[1][0]);
     } catch (err) {
-      throw new AppError(
-        `Error while updating, ${getErrorMsg(err)}`,
-        AppErrorCodes.VALIDATION_ERROR,
-        AppErrorStatus.UNPROCESSABLE_ENTITY,
-      );
+      this.throwError(`Error while updating, ${getErrorMsg(err)}`);
     }
   }
 
@@ -77,14 +80,19 @@ export class UsersRepository {
     try {
       await this.repository.destroy(options);
     } catch (err) {
-      throw new AppError(
-        `Error while deleting, ${getErrorMsg(err)}`,
-        AppErrorCodes.VALIDATION_ERROR,
-        AppErrorStatus.UNPROCESSABLE_ENTITY,
-      );
+      this.throwError(`Error while deleting, ${getErrorMsg(err)}`);
     }
   }
 
+  private throwError(err: any) {
+    this.logger.error(`${err}`);
+
+    throw new AppError(
+      `${err}`,
+      AppErrorCodes.VALIDATION_ERROR,
+      AppErrorStatus.UNPROCESSABLE_ENTITY,
+    );
+  }
 
   private transformResult(modelResult: Users): any {
     return this.transformModel(modelResult);
@@ -109,5 +117,4 @@ export class UsersRepository {
 
     return Object.fromEntries(result);
   }
-  
 }

@@ -4,24 +4,33 @@ import {
   AppErrorStatus,
   getErrorMsg,
 } from 'src/shared/exceptions/AppError';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { compare, hash } from 'bcrypt';
 
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { LoginRequestDto, LoginResponseDto, RegisterRequestDto, RegisterResponseDto, TokenSchema, UserSchema } from '../utils/users.dto';
+import {
+  LoginRequestDto,
+  LoginResponseDto,
+  RegisterRequestDto,
+  RegisterResponseDto,
+  TokenSchema,
+  UserSchema,
+} from '../utils/users.dto';
 import { UsersRepository } from '../repositories/users.repository';
 
 const EXPIRE_TIME = 60 * 60 * 24;
 
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
+
   constructor(
     private jwtService: JwtService,
     private readonly configService: ConfigService<NodeJS.ProcessEnv>,
-    protected readonly userRepository: UsersRepository
-  ) { }
+    protected readonly userRepository: UsersRepository,
+  ) {}
 
   async register(payload: RegisterRequestDto): Promise<RegisterResponseDto> {
     payload.password = await hash(payload.password, 10);
@@ -85,8 +94,12 @@ export class UsersService {
         ),
       };
     } catch (e) {
+      const error: string = `Error while generating tokens, ${getErrorMsg(e)}`;
+
+      this.logger.error(`${error}`);
+
       throw new AppError(
-        `Error while generating tokens, ${getErrorMsg(e)}`,
+        `Error while generating tokens, ${error}`,
         AppErrorCodes.INTERNAL_SERVER_ERROR,
         AppErrorStatus.INTERNAL_SERVER_ERROR,
       );

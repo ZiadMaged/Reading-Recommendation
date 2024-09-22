@@ -1,32 +1,51 @@
 import { UsersBooks } from '../entities/users-books.entity';
-import { ModelCtor } from 'sequelize-typescript';
-import { CreateOptionsType, DestroyOptionsType, FindAndCountOptionsType, FindOptionsType, UpdateOptionWithReturnType } from 'src/shared/types/repository.type';
-import { AppError, AppErrorCodes, AppErrorStatus, getErrorMsg } from 'src/shared/exceptions/AppError';
-import { ResponseUserBookDto, UpdateBookProgressDto, UsersBooksPaginationDto } from '../utils/users-books.dto';
+import {
+  CreateOptionsType,
+  DestroyOptionsType,
+  FindAndCountOptionsType,
+  FindOptionsType,
+  UpdateOptionWithReturnType,
+} from 'src/shared/types/repository.type';
+import {
+  AppError,
+  AppErrorCodes,
+  AppErrorStatus,
+  getErrorMsg,
+} from 'src/shared/exceptions/AppError';
+import {
+  ResponseUserBookDto,
+  UpdateBookProgressDto,
+  UsersBooksPaginationDto,
+} from '../utils/users-books.dto';
+import { InjectModel } from '@nestjs/sequelize';
+import { Logger } from '@nestjs/common';
 
 export class UsersBooksRepository {
-  constructor(protected repository: ModelCtor<UsersBooks>) {
-    this.repository = UsersBooks;
-  }
+  private readonly logger = new Logger(UsersBooksRepository.name);
 
-  async getAll(options?: FindAndCountOptionsType<UsersBooks>): Promise<UsersBooksPaginationDto> {
+  constructor(
+    @InjectModel(UsersBooks)
+    protected repository: typeof UsersBooks,
+  ) {}
+
+  async getAll(
+    options?: FindAndCountOptionsType<UsersBooks>,
+  ): Promise<UsersBooksPaginationDto> {
     try {
-      const rows: UsersBooks[] =
-        await this.repository.findAll(options);
+      const rows: UsersBooks[] = await this.repository.findAll(options);
 
       const result: ResponseUserBookDto[] = this.transformResultArray(rows);
 
       return { rows: result, count: 0 };
     } catch (err) {
-      throw new AppError(
-        `Error while getting all records, ${getErrorMsg(err)}`,
-        AppErrorCodes.VALIDATION_ERROR,
-        AppErrorStatus.UNPROCESSABLE_ENTITY,
-      );
+      this.throwError(`Error while getting all records, ${getErrorMsg(err)}`);
     }
   }
-  
-  async get(id?: number, options?: FindOptionsType<UsersBooks>): Promise<ResponseUserBookDto> {
+
+  async get(
+    id?: number,
+    options?: FindOptionsType<UsersBooks>,
+  ): Promise<ResponseUserBookDto> {
     try {
       let modelResult: UsersBooks;
 
@@ -36,11 +55,7 @@ export class UsersBooksRepository {
 
       return this.transformResult(modelResult);
     } catch (err) {
-      throw new AppError(
-        `Error while getting a record, ${getErrorMsg(err)}`,
-        AppErrorCodes.VALIDATION_ERROR,
-        AppErrorStatus.UNPROCESSABLE_ENTITY,
-      );
+      this.throwError(`Error while getting a record, ${getErrorMsg(err)}`);
     }
   }
 
@@ -49,15 +64,14 @@ export class UsersBooksRepository {
     options?: CreateOptionsType<UsersBooks>,
   ): Promise<ResponseUserBookDto> {
     try {
-      const modelResult: UsersBooks = await this.repository.create(item, options);
+      const modelResult: UsersBooks = await this.repository.create(
+        item,
+        options,
+      );
 
       return this.transformResult(modelResult);
     } catch (err) {
-      throw new AppError(
-        `Error while creating, ${getErrorMsg(err)}`,
-        AppErrorCodes.VALIDATION_ERROR,
-        AppErrorStatus.UNPROCESSABLE_ENTITY,
-      );
+      this.throwError(`Error while creating, ${getErrorMsg(err)}`);
     }
   }
 
@@ -78,15 +92,9 @@ export class UsersBooksRepository {
         }
 
         return resp as ResponseUserBookDto;
-      } else 
-        return this.transformResult(result[1][0]);
-      
+      } else return this.transformResult(result[1][0]);
     } catch (err) {
-      throw new AppError(
-        `Error while updating, ${getErrorMsg(err)}`,
-        AppErrorCodes.VALIDATION_ERROR,
-        AppErrorStatus.UNPROCESSABLE_ENTITY,
-      );
+      this.throwError(`Error while updating, ${getErrorMsg(err)}`);
     }
   }
 
@@ -94,12 +102,18 @@ export class UsersBooksRepository {
     try {
       await this.repository.destroy(options);
     } catch (err) {
-      throw new AppError(
-        `Error while deleting, ${getErrorMsg(err)}`,
-        AppErrorCodes.VALIDATION_ERROR,
-        AppErrorStatus.UNPROCESSABLE_ENTITY,
-      );
+      this.throwError(`Error while deleting, ${getErrorMsg(err)}`);
     }
+  }
+
+  private throwError(err: any) {
+    this.logger.error(`${err}`);
+
+    throw new AppError(
+      `${err}`,
+      AppErrorCodes.VALIDATION_ERROR,
+      AppErrorStatus.UNPROCESSABLE_ENTITY,
+    );
   }
 
   private transformResultArray(
@@ -139,5 +153,4 @@ export class UsersBooksRepository {
 
     return Object.fromEntries(result);
   }
-  
 }

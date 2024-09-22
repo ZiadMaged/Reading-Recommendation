@@ -6,18 +6,12 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { UsersBooks } from './entities/users-books.entity';
 import { BooksModule } from 'src/books/books.module';
 
-const PROVIDERS = [
-  UsersBooksService,
-  UsersBooksRepository
-];
+const PROVIDERS = [UsersBooksService, UsersBooksRepository];
 
 @Module({
-  imports: [
-    SequelizeModule.forFeature([UsersBooks]),
-    BooksModule
-  ],
+  imports: [SequelizeModule.forFeature([UsersBooks]), BooksModule],
   providers: [...PROVIDERS],
   controllers: [UsersBooksController],
   exports: [UsersBooksService],
 })
-export class UsersBooksModule { }
+export class UsersBooksModule {}

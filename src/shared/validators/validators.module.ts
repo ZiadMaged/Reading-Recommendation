@@ -3,11 +3,7 @@ import { Exists } from './exists.validator';
 import { DoesntExists } from './doesnt-exist.validator';
 import { JwtService } from '@nestjs/jwt';
 
-const PROVIDERS = [
-  Exists, 
-  DoesntExists, 
-  JwtService,
-];
+const PROVIDERS = [Exists, DoesntExists, JwtService];
 
 @Global()
 @Module({

@@ -1,18 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { BooksRepository } from '../repositories/books.repository';
-import { BooksPaginationDto, CreateBookDto, ResponseBookDto, UpdateBookDto } from '../utils/books.dto';
+import {
+  BooksPaginationDto,
+  CreateBookDto,
+  ResponseBookDto,
+  UpdateBookDto,
+} from '../utils/books.dto';
 import { UpdateOptionWithReturnType } from 'src/shared/types/repository.type';
 import { Books } from '../entities/books.entity';
 
 @Injectable()
 export class BooksService {
-  constructor(
-    protected readonly booksRepository: BooksRepository
-  ) { }
-  
+  constructor(protected readonly booksRepository: BooksRepository) {}
+
   async getAll(): Promise<ResponseBookDto[]> {
-    const {rows}: BooksPaginationDto= await this.booksRepository.getAll();
-    
+    const { rows }: BooksPaginationDto = await this.booksRepository.getAll({
+      order: [['id', 'ASC']],
+    });
+
     return rows;
   }
 
@@ -25,13 +30,12 @@ export class BooksService {
   }
 
   async update(id: number, payload: UpdateBookDto): Promise<ResponseBookDto> {
-    if(!Object.keys(payload).length)
-      return await this.getById(id);
+    if (!Object.keys(payload).length) return await this.getById(id);
 
     const options: UpdateOptionWithReturnType<Books> = {
       returning: true,
       where: { id },
-    }
+    };
 
     return await this.booksRepository.update(payload, options);
   }

@@ -1,4 +1,4 @@
-import { IsInt, IsOptional } from 'class-validator';
+import { IsInt, IsOptional, Min } from 'class-validator';
 
 export class UpdateBookDto {
   @IsOptional()
@@ -6,5 +6,6 @@ export class UpdateBookDto {
 
   @IsOptional()
   @IsInt()
+  @Min(1)
   numPages?: number;
 }

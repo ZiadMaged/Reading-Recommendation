@@ -30,6 +30,6 @@ import { UsersBooksModule } from './users-books/users-books.module';
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
-  ]
+  ],
 })
-export class AppModule { }
+export class AppModule {}

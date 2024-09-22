@@ -1,9 +1,4 @@
-import {
-  Body,
-  Controller,
-  Post,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Body, Controller, Post, UseInterceptors } from '@nestjs/common';
 import { UsersService } from '../services/users.service';
 import { UsersInterceptor } from '../utils/interceptor/users.interceptor';
 import { RoleType } from 'src/shared/enums/roles.enum';
@@ -17,9 +12,7 @@ export class UsersController {
 
   @Post('login')
   @PublicRoute()
-  @UseInterceptors(
-    new UsersInterceptor<LoginResponseDto>(LoginResponseDto),
-  )
+  @UseInterceptors(new UsersInterceptor<LoginResponseDto>(LoginResponseDto))
   async login(@Body() dto: LoginRequestDto): Promise<LoginResponseDto> {
     return await this.userService.login(dto);
   }
@@ -29,10 +22,12 @@ export class UsersController {
   @UseInterceptors(
     new UsersInterceptor<RegisterResponseDto>(RegisterResponseDto),
   )
-  async registerAdmin(@Body() dto: RegisterRequestDto): Promise<RegisterResponseDto> {
+  async registerAdmin(
+    @Body() dto: RegisterRequestDto,
+  ): Promise<RegisterResponseDto> {
     dto = {
       ...dto,
-      role: RoleType.Admin
+      role: RoleType.Admin,
     };
 
     return await this.userService.register(dto);
@@ -43,10 +38,12 @@ export class UsersController {
   @UseInterceptors(
     new UsersInterceptor<RegisterResponseDto>(RegisterResponseDto),
   )
-  async registerUser(@Body() dto: RegisterRequestDto): Promise<RegisterResponseDto> {
+  async registerUser(
+    @Body() dto: RegisterRequestDto,
+  ): Promise<RegisterResponseDto> {
     dto = {
       ...dto,
-      role: RoleType.User
+      role: RoleType.User,
     };
 
     return await this.userService.register(dto);

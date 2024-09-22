@@ -10,10 +10,8 @@ import {
   UpdatedAt,
   DeletedAt,
   AutoIncrement,
-  DataType,
   BelongsToMany,
 } from 'sequelize-typescript';
-import { RoleType } from 'src/shared/enums/roles.enum';
 import { UsersBooks } from 'src/users-books/entities/users-books.entity';
 import { Users } from 'src/users/entities/users.entity';
 
@@ -36,7 +34,7 @@ export class Books extends Model<Books> {
 
   @BelongsToMany(() => Users, () => UsersBooks)
   users: Users[];
-  
+
   @CreatedAt
   @AllowNull(false)
   @Default(Sequelize.literal('CURRENT_TIMESTAMP'))

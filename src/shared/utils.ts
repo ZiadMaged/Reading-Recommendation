@@ -7,7 +7,7 @@ import {
   AppErrorCodes,
   AppErrorStatus,
   getErrorMsg,
-} from 'src/shared/exceptions/AppError';
+} from '../shared/exceptions/AppError';
 
 function performIntercept(handler: CallHandler, dto: any): Observable<any> {
   return handler.handle().pipe(
