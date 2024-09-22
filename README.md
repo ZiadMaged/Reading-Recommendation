@@ -1,30 +1,39 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+# Reading Recommendation System APIs
 
 ## Description
+Reading Recommendation System allows users to submit their reading intervals and recommends the top-rated books based on the number of unique pages read by all users.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## System Overview
+The Reading Recommendation System provides two main operations:
+1. Allow users to submit an interval of starting and ending pages that they read for a specific book. Users can submit multiple intervals for the same book.
+2. Show the top five books in the system, based on the number of unique pages read by all users (sorted from most read pages to least read pages).
+
+## Technical Overview
+
+This project has been created in a <b>Modular Monolithic Architecture</b> using:
+
+- NestJs
+- Postgres DB
+- Clean Architecture
+- Repository Pattern
+- Code First using Sequlize ORM
+- Entity Folder Structure
+- Authentication
+- Authorization (Role-Based)
+- Logging and Exception Handling
+
+
+## Prerequisites
+
+- ### Database
+
+    Create a new database in Postgres (Ex: reading-recommendations)
+
+
+- ### Project
+
+    Create `.env` file and paste the values from the `.env.example` file and change the database credentials
+
 
 ## Project setup
 
@@ -35,51 +44,71 @@ $ npm install
 ## Compile and run the project
 
 ```bash
-# development
 $ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
 ```
 
-## Run tests
 
-```bash
-# unit tests
-$ npm run test
+## API Specification
 
-# e2e tests
-$ npm run test:e2e
+* ###  Submit a User Reading Interval
 
-# test coverage
-$ npm run test:cov
-```
+    #### Request
+    Allows users to submit their reading intervals for a specific book.
+    
+    `PATCH /books/:bookId/progress`
+    
+    ```json
+    {
+      "start_page": 2,
+      "end_page": 30
+    }
+    ```
+    
+    #### Response
+    Returns a status code indicating whether the request was successful or not.
+    ```json
+    {
+      "status_code": "success"
+    }
+    ```
+* ###  Calculate the Most Recommended Five Books
 
-## Resources
+    #### Request
+    The API allows users to get the top five recommended books in the system.
+    
+    `GET /books/recommendations`
+    
+    #### Response
+    The API returns an array of books sorted by the number of read pages in descending order.
+    ```json
+    [
+      {
+        "book_id": "5",
+        "book_name": "test1",
+        "num_of_pages": "143",
+        "num_of_read_pages": "100"
+      },
+      {
+        "book_id": "1",
+        "book_name": "test3",
+        "num_of_pages": "100",
+        "num_of_read_pages": "90"
+      },
+      ...
+    ]
+    ```
+    
+## Example API Test Cases
 
-Check out a few resources that may come in handy when working with NestJS:
+Here are some example test cases you can use to verify the functionality of the APIs:
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- **POST /register/admin**: Should create a new admin.
+- **POST /register/user**: Should create a new user.
+- **POST /login**: Should return token by verifying the email and password.
+- **GET /books**: Should return a list of all books **(requires admin role)**.
+- **POST /books**: Should create a new book **(requires admin role)**.
+- **GET /books/:bookId**: Should return the details of a specific book **(requires admin role)**.
+- **PATCH /books/:bookId**: Should update the details of a specific book **(requires admin role)**.
+- **GET /books/:bookId**: Should return the details of a specific book **(requires admin role)**.
+- **PUT /books/:bookId/progress**: Should update the reading intervals for a specific book.
+- **GET /books/recommendations**: Should return a list of top five recommended books in the system.
